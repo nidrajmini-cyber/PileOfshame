@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#4a6fa5"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="Pile of Shame"/>
+  <meta name="description" content="Track your miniature painting progress — by Nidraj"/>
+  <title>Pile of Shame</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:Georgia,serif;-webkit-font-smoothing:antialiased;background:#f0f4f8}
+    button,input{font-family:Georgia,serif}
+    #root{min-height:100%}
+    input::placeholder{color:#b0bec9}
+    #fab-btn{position:fixed!important;bottom:28px!important;right:28px!important;z-index:50!important}
+    #splash{position:fixed;inset:0;background:linear-gradient(135deg,#f0f4f8,#e8eef4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:9999;transition:opacity 0.5s}
+    .si{width:80px;height:80px;border-radius:18px;background:linear-gradient(145deg,#4a6fa5,#3a5a8a);display:flex;align-items:center;justify-content:center;font-size:40px;box-shadow:0 8px 32px rgba(74,111,165,0.4)}
+    .st{font-size:22px;font-weight:800;color:#4a6fa5}
+    .ss{font-size:12px;color:#8a9bb0;letter-spacing:0.1em;text-transform:uppercase}
+    .sp{width:32px;height:32px;border:3px solid rgba(74,111,165,0.2);border-top-color:#4a6fa5;border-radius:50%;animation:spin 0.8s linear infinite;margin-top:8px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    ::-webkit-scrollbar{width:4px;height:4px}
+    ::-webkit-scrollbar-thumb{background:rgba(74,111,165,0.3);border-radius:2px}
+  </style>
+</head>
+<body>
+  <div id="splash">
+    <div class="si">🖌️</div>
+    <div class="st">Pile of Shame</div>
+    <div class="ss">par Nidraj</div>
+    <div class="sp"></div>
+  </div>
+  <div id="root"></div>
+  <script src="bundle.js"></script>
+  <script>
+    function showUpdateBanner(){
+      if(document.getElementById('update-banner'))return;
+      const lang=(()=>{try{return localStorage.getItem('pos_lang')||((navigator.language||'').startsWith('fr')?'fr':'en');}catch{return'fr';}})();
+      const b=document.createElement('div');
+      b.id='update-banner';
+      b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#4a6fa5,#3a5a8a);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;font-family:Georgia,serif;font-size:14px;box-shadow:0 4px 20px rgba(0,0,0,0.3)';
+      b.innerHTML='<span>'+(lang==='fr'?'🆕 Mise à jour disponible !':'🆕 Update available!')+'</span><button onclick="window.location.reload()" style="background:#fff;color:#4a6fa5;border:none;border-radius:8px;padding:6px 14px;font-weight:700;cursor:pointer;font-size:13px;">'+(lang==='fr'?'Recharger':'Reload')+'</button>';
+      document.body.prepend(b);
+    }
+    if('serviceWorker' in navigator){
+      window.addEventListener('load',()=>{
+        navigator.serviceWorker.register('sw.js').then(reg=>{
+          reg.addEventListener('updatefound',()=>{
+            const nw=reg.installing;
+            nw.addEventListener('statechange',()=>{if(nw.state==='installed'&&navigator.serviceWorker.controller)showUpdateBanner();});
+          });
+          setInterval(()=>reg.update(),3600000);
+        }).catch(()=>{});
+      });
+    }
+  </script>
+</body>
+</html>
