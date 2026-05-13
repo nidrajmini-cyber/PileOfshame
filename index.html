@@ -38,15 +38,14 @@
   </div>
   <div id="root"></div>
 
-  <!-- Supabase CDN — must load before bundle.js -->
+  <!-- Load Supabase first, synchronously -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script>window.supabase = supabase;</script>
 
-  <!-- App bundle -->
+  <!-- Then load our app -->
   <script src="bundle.js"></script>
 
-  <!-- Service Worker + Update Banner -->
   <script>
+    // Update banner
     function showUpdateBanner(){
       if(document.getElementById('update-banner'))return;
       const lang=(()=>{try{return localStorage.getItem('pos_lang')||((navigator.language||'').startsWith('fr')?'fr':'en');}catch{return'fr';}})();
