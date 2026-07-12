@@ -68,3 +68,18 @@ react-dom/cjs/react-dom-client.production.js:
    * LICENSE file in the root directory of this source tree.
    *)
 */
+
+// Keep Supabase alive - ping every 48h
+(function keepAlive() {
+  var SUPABASE_URL = 'https://khmbmhmkmwjaljvicrsz.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_3ZhywqwoS_KjWjNs98rAgA_ceFhIKiC';
+  var lastPing = localStorage.getItem('pos_ping');
+  var now = Date.now();
+  if (!lastPing || now - parseInt(lastPing) > 48 * 60 * 60 * 1000) {
+    fetch(SUPABASE_URL + '/rest/v1/jeux?limit=1', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    }).then(function() {
+      localStorage.setItem('pos_ping', String(now));
+    }).catch(function(){});
+  }
+})();
